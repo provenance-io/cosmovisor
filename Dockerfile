@@ -1,8 +1,12 @@
 # Create the cosmovisor source image
 FROM golang:1.15-buster as build
-ENV GO111MODULE=on
-RUN go get github.com/provenance-io/cosmovisor/cmd/cosmovisor
+WORKDIR /app
+COPY ./go.* ./
+RUN go mod download
+COPY . .
+RUN go install ./cmd/cosmovisor
 
-# Dump the 2G go get from above for publishing. Final image here is ~30M
+# Final image here is ~30M
 FROM gcr.io/distroless/base-debian10 as visor
 COPY --from=build /go/bin/cosmovisor /usr/bin/cosmovisor
+ENTRYPOINT ["/usr/bin/cosmovisor"]
