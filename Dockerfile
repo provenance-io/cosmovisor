@@ -6,6 +6,7 @@ RUN go mod download
 COPY *.go ./
 COPY cmd/ ./cmd/
 COPY testdata/ ./testdata/
+RUN go test ./...
 RUN go install ./cmd/cosmovisor
 
 # Final image here is ~30M

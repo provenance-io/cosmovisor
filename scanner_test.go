@@ -45,7 +45,8 @@ func TestWaitForInfo(t *testing.T) {
 		"match consensus failure no info": {
 			write: []string{
 				"first line\n",
-				`err="UPGRADE \"myname\" NEEDED at height: 123: " module=consensus message="CONSENSUS FAILURE!!!"`,
+				`01:00 ERR UPGRADE "myname" NEEDED at height: 123: ` + "\n",
+				`err="UPGRADE \"myname\" NEEDED at height: 123: " module=consensus message="CONSENSUS FAILURE!!!"` + "\n",
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "myname",
@@ -55,7 +56,8 @@ func TestWaitForInfo(t *testing.T) {
 		"match consensus failure with info": {
 			write: []string{
 				"first line\n",
-				`"err":"UPGRADE \"test\" NEEDED at height: 10: /app/plan.json","another":"thing",module":"consensus","stack":"goroutine 91 [running]:\nruntime/debug.Stack(0xc001709a98, 0x1c3cb40, 0xc001df3620)\n\truntime/debug/stack.go:24 +0x9f\ngithub.com/tendermint/tendermint/consensus.(*State).receiveRoutine.func2(0xc001250000, 0x21b4ba0)\n\tgithub.com/tendermint/tendermint@v0.34.8/consensus/state.go:726 message="CONSENSUS FAILURE!!!"`,
+				`01:00 ERR UPGRADE "test" NEEDED at height: 10: /app/plan.json` + "\n",
+				`"err":"UPGRADE \"test\" NEEDED at height: 10: /app/plan.json another=thing module=consensus stack="goroutine 91 [running]:\nruntime/debug.Stack(0xc001709a98, 0x1c3cb40, 0xc001df3620)\n\truntime/debug/stack.go:24 +0x9f\ngithub.com/tendermint/tendermint/consensus.(*State).receiveRoutine.func2(0xc001250000, 0x21b4ba0)\n\tgithub.com/tendermint/tendermint@v0.34.8/consensus/state.go:726" message="CONSENSUS FAILURE!!!"` + "\n",
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "test",
@@ -64,7 +66,7 @@ func TestWaitForInfo(t *testing.T) {
 		},
 		"match consensus failure json with no info": {
 			write: []string{
-				`{"level":"error","time":"2021-03-24T20:33:13Z","message":"UPGRADE \"jsontest-no\" NEEDED at height: 10: "}` + "\n",
+				`{"level":"error","time":"2021-03-24T20:33:13Z","message":"UPGRADE \"jsontest\" NEEDED at height: 10: "}` + "\n",
 				`{"level":"error","module":"consensus","err":"UPGRADE \"jsontest\" NEEDED at height: 10: ","message":"CONSENSUS FAILURE!!!"}` + "\n",
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
@@ -74,7 +76,7 @@ func TestWaitForInfo(t *testing.T) {
 		},
 		"match consensus failure json with info": {
 			write: []string{
-				`{"level":"error","time":"2021-03-24T20:33:13Z","message":"UPGRADE \"jsontest-no\" NEEDED at height: 10: /not/this/plan.json"}` + "\n",
+				`{"level":"error","time":"2021-03-24T20:33:13Z","message":"UPGRADE \"jsontest\" NEEDED at height: 10: /app/plan.json"}` + "\n",
 				`{"level":"error","module":"consensus","err":"UPGRADE \"jsontest\" NEEDED at height: 10: /app/plan.json","message":"CONSENSUS FAILURE!!!"}` + "\n",
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
@@ -85,6 +87,7 @@ func TestWaitForInfo(t *testing.T) {
 		"panic text with no info": {
 			write: []string{
 				"first line\n",
+				`01:00 ERR UPGRADE "test-panic" NEEDED at height: 10: ` + "\n",
 				`panic: UPGRADE "test-panic" NEEDED at height: 10: ` + "\n",
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
@@ -95,11 +98,52 @@ func TestWaitForInfo(t *testing.T) {
 		"panic text with info": {
 			write: []string{
 				"first line\n",
+				`01:00 ERR UPGRADE "test-panic" NEEDED at height: 10: /app/plan.json` + "\n",
 				`panic: UPGRADE "test-panic" NEEDED at height: 10: /app/plan.json` + "\n",
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "test-panic",
 				Info: "/app/plan.json",
+			},
+		},
+		"panic text with info as json": {
+			write: []string{
+				`01:00 ERR UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"linux/amd64":"https://github.com/cosmos/cosmos-sdk/raw/51249cb93130810033408934454841c98423ed4b/cosmovisor/testdata/repo/zip_binary/autod.zip?checksum=sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998"}}` + "\n",
+				`panic: UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"linux/amd64":"https://github.com/cosmos/cosmos-sdk/raw/51249cb93130810033408934454841c98423ed4b/cosmovisor/testdata/repo/zip_binary/autod.zip?checksum=sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998"}}` + "\n",
+			},
+			expectUpgrade: &cosmovisor.UpgradeInfo{
+				Name: "chain2",
+				Info: `{"binaries":{"linux/amd64":"https://github.com/cosmos/cosmos-sdk/raw/51249cb93130810033408934454841c98423ed4b/cosmovisor/testdata/repo/zip_binary/autod.zip?checksum=sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998"}}`,
+			},
+		},
+		"consensus failure with info as json": {
+			write: []string{
+				`01:00 ERR UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"linux/amd64":"https://github.com/cosmos/cosmos-sdk/raw/51249cb93130810033408934454841c98423ed4b/cosmovisor/testdata/repo/zip_binary/autod.zip?checksum=sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998"}}` + "\n",
+				`message="CONSENSUS FAILURE!!!" err="UPGRADE \"chain2\" NEEDED at height: 49: {\"binaries\":{\"linux/amd64\":\"https://github.com/cosmos/cosmos-sdk/raw/51249cb93130810033408934454841c98423ed4b/cosmovisor/testdata/repo/zip_binary/autod.zip?checksum=sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998\"}}"` + "\n",
+			},
+			expectUpgrade: &cosmovisor.UpgradeInfo{
+				Name: "chain2",
+				Info: `{"binaries":{"linux/amd64":"https://github.com/cosmos/cosmos-sdk/raw/51249cb93130810033408934454841c98423ed4b/cosmovisor/testdata/repo/zip_binary/autod.zip?checksum=sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998"}}`,
+			},
+		},
+		"panic text with info as https": {
+			write: []string{
+				`01:00 ERR UPGRADE "chain2" NEEDED at height: 49: https://really.cool.network/downloads/v0/download.zip?sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998` + "\n",
+				`panic: UPGRADE "chain2" NEEDED at height: 49: https://really.cool.network/downloads/v0/download.zip?sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998` + "\n",
+			},
+			expectUpgrade: &cosmovisor.UpgradeInfo{
+				Name: "chain2",
+				Info: `https://really.cool.network/downloads/v0/download.zip?sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998`,
+			},
+		},
+		"consensus failure with info as https": {
+			write: []string{
+				`01:00 ERR UPGRADE "chain2" NEEDED at height: 49: https://really.cool.network/downloads/v0/download.zip?sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998` + "\n",
+				`message="CONSENSUS FAILURE!!!" err="UPGRADE \"chain2\" NEEDED at height: 49: https://really.cool.network/downloads/v0/download.zip?sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998"` + "\n",
+			},
+			expectUpgrade: &cosmovisor.UpgradeInfo{
+				Name: "chain2",
+				Info: `https://really.cool.network/downloads/v0/download.zip?sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998`,
 			},
 		},
 	}
