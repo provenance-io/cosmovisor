@@ -3,7 +3,6 @@ package cosmovisor
 import (
 	"bufio"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -22,9 +21,8 @@ var consensusUpgradeRegex = regexp.MustCompile(`UPGRADE (?:\\|)"(.*?)(?:\\|)" NE
 
 // UpgradeInfo is the details from the regexp
 type UpgradeInfo struct {
-	Name   string
-	Height int
-	Info   string
+	Name string
+	Info string
 }
 
 // WaitForUpdate will listen to the scanner until a line matches upgradeRegexp.
@@ -49,15 +47,9 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 		subs := consensusUpgradeRegex.FindStringSubmatch(line)
 		info := UpgradeInfo{
 			Name: subs[1],
-			Height: AlwaysAtoi(subs[2]),
 			Info: subs[3],
 		}
 		return &info, nil
 	}
 	return nil, scanner.Err()
-}
-
-func AlwaysAtoi(s string) int {
-	i, _ := strconv.Atoi(s)
-	return i
 }

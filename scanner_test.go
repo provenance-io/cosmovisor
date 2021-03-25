@@ -49,7 +49,6 @@ func TestWaitForInfo(t *testing.T) {
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "myname",
-				Height: 123,
 				Info: "",
 			},
 		},
@@ -60,7 +59,6 @@ func TestWaitForInfo(t *testing.T) {
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "test",
-				Height: 10,
 				Info: "/app/plan.json",
 			},
 		},
@@ -71,7 +69,6 @@ func TestWaitForInfo(t *testing.T) {
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "jsontest",
-				Height: 10,
 				Info: "",
 			},
 		},
@@ -82,7 +79,6 @@ func TestWaitForInfo(t *testing.T) {
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "jsontest",
-				Height: 10,
 				Info: "/app/plan.json",
 			},
 		},
@@ -93,7 +89,6 @@ func TestWaitForInfo(t *testing.T) {
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "test-panic",
-				Height: 10,
 				Info: "",
 			},
 		},
@@ -104,7 +99,6 @@ func TestWaitForInfo(t *testing.T) {
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "test-panic",
-				Height: 10,
 				Info: "/app/plan.json",
 			},
 		},
