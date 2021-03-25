@@ -1,6 +1,6 @@
 module github.com/cosmos/cosmos-sdk/cosmovisor
 
-go 1.14
+go 1.15
 
 require (
 	github.com/hashicorp/go-getter v1.4.1
