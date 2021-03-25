@@ -7,6 +7,6 @@ COPY . .
 RUN go install ./cmd/cosmovisor
 
 # Final image here is ~30M
-FROM gcr.io/distroless/base-debian10 as visor
+FROM gcr.io/distroless/base-debian10 as run
 COPY --from=build /go/bin/cosmovisor /usr/bin/cosmovisor
 ENTRYPOINT ["/usr/bin/cosmovisor"]
