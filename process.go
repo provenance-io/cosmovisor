@@ -112,25 +112,21 @@ func (u *WaitResult) SetUpgrade(up *UpgradeInfo) {
 // It returns (nil, nil) if the process exited normally without triggering an upgrade. This is very unlikely
 // to happened with "start" but may happened with short-lived commands like `gaiad export ...`
 func WaitForUpgradeOrExit(cmd *exec.Cmd, scanOut, scanErr *bufio.Scanner) (*UpgradeInfo, error) {
-	outCh := make(chan WaitResult)
-	waitScan := func(scan *bufio.Scanner, c chan WaitResult) {
+	res := WaitResult{}
+	waitScan := func(scan *bufio.Scanner) {
 		upgrade, err := WaitForUpdate(scan)
-		r := WaitResult{}
-		r.SetUpgrade(upgrade)
-		r.SetError(err)
-		outCh <- r
+		if err != nil {
+			res.SetError(err)
+		}
+		if upgrade != nil {
+			res.SetUpgrade(upgrade)
+			_ = cmd.Process.Kill()
+		}
 		return
 	}
-
 	// wait for the scanners, which can trigger upgrade and kill cmd
-	go waitScan(scanOut, outCh)
-	go waitScan(scanErr, outCh)
-
-	var res WaitResult
-	select {
-	case res = <-outCh:
-		_ = cmd.Process.Kill()
-	}
+	go waitScan(scanOut)
+	go waitScan(scanErr)
 
 	// if the command exits normally (eg. short command like `gaiad version`), just return (nil, nil)
 	// we often get broken read pipes if it runs too fast.

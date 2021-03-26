@@ -32,6 +32,13 @@ const (
 	PENDING
 )
 
+const (
+	UPGRADE_TEXT = "UPGRADE "
+	NEEDED_TEXT = " NEEDED at "
+	CONSENSUS_FAIL_TEXT = "CONSENSUS FAILURE!!!"
+	PANIC_TEXT = "panic: UPGRADE"
+)
+
 // WaitForUpdate will listen to the scanner until a line matches upgradeRegexp.
 // It returns (info, nil) on a matching line
 // It returns (nil, err) if the input stream errored
@@ -47,7 +54,7 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 		case INITIAL:
 			// Don't use the regexp unless we are actually looking at an upgrade line.
 			// Compiled regex matching is about 20x more expensive than strings.Contains(). (10 vs 200).
-			if !(strings.Contains(line, "UPGRADE") && strings.Contains(line, "NEEDED at ")) {
+			if !(strings.Contains(line, UPGRADE_TEXT) && strings.Contains(line, NEEDED_TEXT)) {
 				continue
 			}
 			// Parse the info, and kick into holding for panic or consensus failure message.
@@ -80,9 +87,10 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 			}
 		case PENDING:
 			// We have hit the panic or consensus failure after an upgrade log message, return out and update.
-			if strings.Contains(line, "panic: UPGRADE") || strings.Contains(line, "CONSENSUS FAILURE!!!") {
+			if strings.Contains(line, PANIC_TEXT) || strings.Contains(line, CONSENSUS_FAIL_TEXT) {
 				return info, nil
 			}
+			continue
 		}
 	}
 	return nil, scanner.Err()

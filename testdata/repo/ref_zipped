@@ -1,5 +1,5 @@
 {
     "binaries": {
-        "any": "https://raw.githubusercontent.com/provenance-io/cosmovisor/mtps/dockerization/testdata/repo/zip_directory/autod.zip?checksum=sha256:d2ae9b960a7f555555488a5527e279f257713d46ea6a2076bea372759906ae72"
+        "any": "https://raw.githubusercontent.com/provenance-io/cosmovisor/mtps/dockerization/testdata/repo/zip_directory/autod.zip?checksum=sha256:3784e4574cad69b67e34d4ea4425eff140063a3870270a301d6bb24a098a27ae"
     }
 }

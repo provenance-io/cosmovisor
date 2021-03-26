@@ -5,7 +5,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/cosmovisor"
+	"github.com/provenance-io/cosmovisor"
 
 	"github.com/stretchr/testify/require"
 )
@@ -57,7 +57,7 @@ func TestWaitForInfo(t *testing.T) {
 			write: []string{
 				"first line\n",
 				`01:00 ERR UPGRADE "test" NEEDED at height: 10: /app/plan.json` + "\n",
-				`"err":"UPGRADE \"test\" NEEDED at height: 10: /app/plan.json another=thing module=consensus stack="goroutine 91 [running]:\nruntime/debug.Stack(0xc001709a98, 0x1c3cb40, 0xc001df3620)\n\truntime/debug/stack.go:24 +0x9f\ngithub.com/tendermint/tendermint/consensus.(*State).receiveRoutine.func2(0xc001250000, 0x21b4ba0)\n\tgithub.com/tendermint/tendermint@v0.34.8/consensus/state.go:726" message="CONSENSUS FAILURE!!!"` + "\n",
+				`"err="UPGRADE \"test\" NEEDED at height: 10: /app/plan.json" another=thing module=consensus stack="goroutine 91 [running]:\nruntime/debug.Stack(0xc001709a98, 0x1c3cb40, 0xc001df3620)\n\truntime/debug/stack.go:24 +0x9f\ngithub.com/tendermint/tendermint/consensus.(*State).receiveRoutine.func2(0xc001250000, 0x21b4ba0)\n\tgithub.com/tendermint/tendermint@v0.34.8/consensus/state.go:726" message="CONSENSUS FAILURE!!!"` + "\n",
 			},
 			expectUpgrade: &cosmovisor.UpgradeInfo{
 				Name: "test",
