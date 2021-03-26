@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "Running $0..."
 echo Chain 2 is live!
 echo Args: $@
 sleep 1
