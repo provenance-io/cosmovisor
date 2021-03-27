@@ -3,6 +3,9 @@
 
 all: cosmovisor test
 
+sums:
+	scripts/update-sums.sh
+
 cosmovisor:
 	go build -mod=readonly ./cmd/cosmovisor
 
