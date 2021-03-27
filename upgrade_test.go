@@ -194,7 +194,7 @@ func (s *upgradeTestSuite) TestDownloadBinary() {
 			validBinary: true,
 		},
 		"get raw binary with invalid checksum": {
-			url:         "./testdata/repo/raw_binary/autod?checksum=sha256:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
+			url:         "./testdata/repo/raw_binary/autod?checksum=sha512:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd90673e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
 			canDownload: false,
 		},
 		"get zipped directory": {
@@ -209,7 +209,7 @@ func (s *upgradeTestSuite) TestDownloadBinary() {
 			validBinary: true,
 		},
 		"get zipped directory with invalid checksum": {
-			url:         "./testdata/repo/zip_directory/autod.zip?checksum=sha256:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
+			url:         "./testdata/repo/zip_directory/autod.zip?checksum=sha512:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd90673e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
 			canDownload: false,
 		},
 		"invalid url": {
