@@ -1,5 +1,3 @@
-// +build linux
-
 package cosmovisor_test
 
 import (
@@ -14,7 +12,7 @@ import (
 	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/require"
 
-	"github.com/cosmos/cosmos-sdk/cosmovisor"
+	"github.com/provenance-io/cosmovisor"
 )
 
 type upgradeTestSuite struct {
@@ -122,11 +120,6 @@ func (s *upgradeTestSuite) TestDoUpgradeNoDownloadUrl() {
 	}
 }
 
-func (s *upgradeTestSuite) TestOsArch() {
-	// all download tests will fail if we are not on linux...
-	s.Require().Equal("linux/amd64", cosmovisor.OSArch())
-}
-
 func (s *upgradeTestSuite) TestGetDownloadURL() {
 	// all download tests will fail if we are not on linux...
 	ref, err := filepath.Abs(filepath.FromSlash("./testdata/repo/ref_zipped"))
@@ -144,7 +137,7 @@ func (s *upgradeTestSuite) TestGetDownloadURL() {
 		},
 		"follow reference": {
 			info: ref,
-			url:  "https://github.com/cosmos/cosmos-sdk/raw/aa5d6140ad4011bb33d472dca8246a0dcbe223ee/cosmovisor/testdata/repo/zip_directory/autod.zip?checksum=sha256:3784e4574cad69b67e34d4ea4425eff140063a3870270a301d6bb24a098a27ae",
+			url:  "https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_directory/autod.zip?checksum=sha256:3784e4574cad69b67e34d4ea4425eff140063a3870270a301d6bb24a098a27ae",
 		},
 		"malformated reference target": {
 			info:  badref,
@@ -155,11 +148,11 @@ func (s *upgradeTestSuite) TestGetDownloadURL() {
 			isErr: true,
 		},
 		"proper binary": {
-			info: `{"binaries": {"linux/amd64": "https://foo.bar/", "windows/amd64": "https://something.else"}}`,
+			info: `{"binaries": {"darwin/amd64": "https://foo.bar/", "linux/amd64": "https://foo.bar/", "windows/amd64": "https://something.else"}}`,
 			url:  "https://foo.bar/",
 		},
 		"any architecture not used": {
-			info: `{"binaries": {"linux/amd64": "https://foo.bar/", "*": "https://something.else"}}`,
+			info: `{"binaries": {"darwin/amd64": "https://foo.bar/", "linux/amd64": "https://foo.bar/", "*": "https://something.else"}}`,
 			url:  "https://foo.bar/",
 		},
 		"any architecture used": {
@@ -196,12 +189,12 @@ func (s *upgradeTestSuite) TestDownloadBinary() {
 		},
 		"get raw binary with checksum": {
 			// sha256sum ./testdata/repo/raw_binary/autod
-			url:         "./testdata/repo/raw_binary/autod?checksum=sha256:e6bc7851600a2a9917f7bf88eb7bdee1ec162c671101485690b4deb089077b0d",
+			url:         "./testdata/repo/raw_binary/autod?checksum=sha256:89959a5782b7c301a23e5ed45f240549c628addc90eadb24b6f9df4b71da7089",
 			canDownload: true,
 			validBinary: true,
 		},
 		"get raw binary with invalid checksum": {
-			url:         "./testdata/repo/raw_binary/autod?checksum=sha256:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
+			url:         "./testdata/repo/raw_binary/autod?checksum=sha512:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd90673e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
 			canDownload: false,
 		},
 		"get zipped directory": {
@@ -216,7 +209,7 @@ func (s *upgradeTestSuite) TestDownloadBinary() {
 			validBinary: true,
 		},
 		"get zipped directory with invalid checksum": {
-			url:         "./testdata/repo/zip_directory/autod.zip?checksum=sha256:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
+			url:         "./testdata/repo/zip_directory/autod.zip?checksum=sha512:73e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd90673e2bd6cbb99261733caf137015d5cc58e3f96248d8b01da68be8564989dd906",
 			canDownload: false,
 		},
 		"invalid url": {

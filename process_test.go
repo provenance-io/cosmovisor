@@ -1,5 +1,3 @@
-// +build linux
-
 package cosmovisor_test
 
 import (
@@ -8,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/cosmos/cosmos-sdk/cosmovisor"
+	"github.com/provenance-io/cosmovisor"
 )
 
 type processTestSuite struct {
@@ -21,7 +19,7 @@ func TestProcessTestSuite(t *testing.T) {
 
 // TestLaunchProcess will try running the script a few times and watch upgrades work properly
 // and args are passed through
-func (s *processTestSuite) TestLaunchProcess() {
+func (s *processTestSuite) TestLaunchProcessLocal() {
 	home := copyTestData(s.T(), "validate")
 	cfg := &cosmovisor.Config{Home: home, Name: "dummyd"}
 
@@ -37,7 +35,7 @@ func (s *processTestSuite) TestLaunchProcess() {
 	s.Require().NoError(err)
 	s.Require().True(doUpgrade)
 	s.Require().Equal("", stderr.String())
-	s.Require().Equal("Genesis foo bar 1234\nUPGRADE \"chain2\" NEEDED at height: 49: {}\n", stdout.String())
+	s.Require().Equal("Genesis foo bar 1234\nUPGRADE \"chain2\" NEEDED at height: 49: {}\npanic: UPGRADE \"chain2\" NEEDED at height: 49: {}\n", stdout.String())
 
 	// ensure this is upgraded now and produces new output
 
@@ -78,7 +76,12 @@ func (s *processTestSuite) TestLaunchProcessWithDownloads() {
 	s.Require().NoError(err)
 	s.Require().True(doUpgrade)
 	s.Require().Equal("", stderr.String())
-	s.Require().Equal("Preparing auto-download some args\n"+`ERROR: UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"linux/amd64":"https://github.com/cosmos/cosmos-sdk/raw/51249cb93130810033408934454841c98423ed4b/cosmovisor/testdata/repo/zip_binary/autod.zip?checksum=sha256:dc48829b4126ae95bc0db316c66d4e9da5f3db95e212665b6080638cca77e998"}} module=main`+"\n", stdout.String())
+	s.Require().Equal(
+		"Preparing auto-download some args\n"+
+			`ERROR: UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"any":"https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_binary/autod.zip?checksum=sha256:625f3888456c57b1b1f7706243864497bc7ee18d7e8f30de792bbc6150815d54"}} module=main`+"\n" +
+			`ERROR: CONSENSUS FAILURE!!! err="UPGRADE \"chain2\" NEEDED at height: 49: {\"binaries\":{\"any\":\"https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_binary/autod.zip?checksum=sha256:625f3888456c57b1b1f7706243864497bc7ee18d7e8f30de792bbc6150815d54\"}}" module=main`+"\n",
+			stdout.String(),
+		)
 
 	// ensure this is upgraded now and produces new output
 	currentBin, err = cfg.CurrentBin()
@@ -91,7 +94,13 @@ func (s *processTestSuite) TestLaunchProcessWithDownloads() {
 	s.Require().NoError(err)
 	s.Require().True(doUpgrade)
 	s.Require().Equal("", stderr.String())
-	s.Require().Equal("Chain 2 from zipped binary link to referral\nArgs: run --fast\n"+`ERROR: UPGRADE "chain3" NEEDED at height: 936: https://github.com/cosmos/cosmos-sdk/raw/0eae1a50612b8bf803336d35055896fbddaa1ddd/cosmovisor/testdata/repo/ref_zipped?checksum=sha256:0a428575de718ed3cf0771c9687eefaf6f19359977eca4d94a0abd0e11ef8e64 module=main`+"\n", stdout.String())
+	s.Require().Equal(
+		"Chain 2 from zipped binary link to referral\n"+
+			"Args: run --fast\n"+
+			`ERROR: UPGRADE "chain3" NEEDED at height: 936: https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/ref_zipped?checksum=sha256:3d370b9b483c779b6cbaa7dbd266da6cacf9eb8f29b0bfb66e16d4fa8ba02b3a module=main`+"\n"+
+			`ERROR: CONSENSUS FAILURE!!! err="UPGRADE \"chain3\" NEEDED at height: 936: https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/ref_zipped?checksum=sha256:3d370b9b483c779b6cbaa7dbd266da6cacf9eb8f29b0bfb66e16d4fa8ba02b3a" module=main`+"\n",
+			stdout.String(),
+		)
 
 	// ended with one more upgrade
 	currentBin, err = cfg.CurrentBin()

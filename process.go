@@ -112,19 +112,18 @@ func (u *WaitResult) SetUpgrade(up *UpgradeInfo) {
 // It returns (nil, nil) if the process exited normally without triggering an upgrade. This is very unlikely
 // to happened with "start" but may happened with short-lived commands like `gaiad export ...`
 func WaitForUpgradeOrExit(cmd *exec.Cmd, scanOut, scanErr *bufio.Scanner) (*UpgradeInfo, error) {
-	var res WaitResult
-
+	res := WaitResult{}
 	waitScan := func(scan *bufio.Scanner) {
 		upgrade, err := WaitForUpdate(scan)
 		if err != nil {
 			res.SetError(err)
-		} else if upgrade != nil {
-			res.SetUpgrade(upgrade)
-			// now we need to kill the process
-			_ = cmd.Process.Kill()
 		}
+		if upgrade != nil {
+			res.SetUpgrade(upgrade)
+			_ = cmd.Process.Signal(syscall.SIGTERM)
+		}
+		return
 	}
-
 	// wait for the scanners, which can trigger upgrade and kill cmd
 	go waitScan(scanOut)
 	go waitScan(scanErr)
