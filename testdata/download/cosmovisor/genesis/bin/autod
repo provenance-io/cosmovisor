@@ -2,8 +2,8 @@
 
 echo Preparing auto-download "${@}"
 sleep 2
-echo 'ERROR: UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"any":"https://raw.githubusercontent.com/provenance-io/cosmovisor/mtps/dockerization/testdata/repo/zip_binary/autod.zip?checksum=sha256:46b0c71dcf54bfb5a1c3eb3886d7c49c9e69f57e4c6f6f0fef23eb36d8561ac1"}} module=main'
+echo 'ERROR: UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"any":"https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_binary/autod.zip?checksum=sha256:625f3888456c57b1b1f7706243864497bc7ee18d7e8f30de792bbc6150815d54"}} module=main'
 sleep 2
-echo 'ERROR: CONSENSUS FAILURE!!! err="UPGRADE \"chain2\" NEEDED at height: 49: {\"binaries\":{\"any\":\"https://raw.githubusercontent.com/provenance-io/cosmovisor/mtps/dockerization/testdata/repo/zip_binary/autod.zip?checksum=sha256:46b0c71dcf54bfb5a1c3eb3886d7c49c9e69f57e4c6f6f0fef23eb36d8561ac1\"}}" module=main'
+echo 'ERROR: CONSENSUS FAILURE!!! err="UPGRADE \"chain2\" NEEDED at height: 49: {\"binaries\":{\"any\":\"https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_binary/autod.zip?checksum=sha256:625f3888456c57b1b1f7706243864497bc7ee18d7e8f30de792bbc6150815d54\"}}" module=main'
 sleep 2
 echo Never should be printed!!!

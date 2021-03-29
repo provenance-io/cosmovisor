@@ -137,7 +137,7 @@ func (s *upgradeTestSuite) TestGetDownloadURL() {
 		},
 		"follow reference": {
 			info: ref,
-			url:  "https://raw.githubusercontent.com/provenance-io/cosmovisor/mtps/dockerization/testdata/repo/zip_directory/autod.zip?checksum=sha256:3784e4574cad69b67e34d4ea4425eff140063a3870270a301d6bb24a098a27ae",
+			url:  "https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_directory/autod.zip?checksum=sha256:3784e4574cad69b67e34d4ea4425eff140063a3870270a301d6bb24a098a27ae",
 		},
 		"malformated reference target": {
 			info:  badref,
