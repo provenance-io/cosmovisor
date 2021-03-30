@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// BackupData backs up the data directory located at $DAEMON_DATA_DIR to
+// BackupData backs up the data directory located at $DAEMON_BACKUP_DATA_DIR to
 // $DAEMON_HOME/backups/$plan/data and create keep at $DAEMON_HOME/backups/$plan/.keep
 func BackupData(cfg *Config, upgradeInfo *UpgradeInfo) error {
 	backupDir := cfg.BackupDir(upgradeInfo.Name)
