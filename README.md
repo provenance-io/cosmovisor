@@ -25,6 +25,8 @@ binary).
 command line arguments and flags (but new binary) after a successful upgrade. By default, `cosmovisor` dies
 afterwards and allows the supervisor to restart it if needed. Note that this will not auto-restart the child
 if there was an error.
+* `DAEMON_BACKUP_DATA_DIR` (*optional*) if set to the daemons data dir, will enable pre-upgrade backups of
+`$DAEMON_BACKUP_DATA_DIR/*` directory to `$DAEMON_HOME/backups/$plan/data`.
 
 ## Data Folder Layout
 
@@ -37,10 +39,13 @@ subprocesses that are controlled by it. The folder content is organised as follo
 ├── genesis
 │   └── bin
 │       └── $DAEMON_NAME
-└── upgrades
+├── upgrades
+│   └── <name>
+│       └── bin
+│           └── $DAEMON_NAME
+└── backups
     └── <name>
-        └── bin
-            └── $DAEMON_NAME
+        └── data
 ```
 
 Each version of the Cosmos SDK application is stored under either `genesis` or `upgrades/<name>`, which holds `bin/$DAEMON_NAME`

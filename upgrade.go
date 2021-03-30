@@ -18,6 +18,12 @@ import (
 // We can now make any changes to the underlying directory without interference and leave it
 // in a state, so we can make a proper restart
 func DoUpgrade(cfg *Config, info *UpgradeInfo) error {
+	// If backups are enabled, perform the (expensive) copy.
+	if cfg.DataDir != "" {
+		if err := BackupData(cfg, info); err != nil {
+			return fmt.Errorf("data backup failed: %w", err)
+		}
+	}
 	// Simplest case is to switch the link
 	err := EnsureBinary(cfg.UpgradeBin(info.Name))
 	if err == nil {
@@ -43,7 +49,6 @@ func DoUpgrade(cfg *Config, info *UpgradeInfo) error {
 	if err := EnsureBinary(cfg.UpgradeBin(info.Name)); err != nil {
 		return fmt.Errorf("downloaded binary doesn't check out: %w", err)
 	}
-
 	return cfg.SetCurrentUpgrade(info.Name)
 }
 
