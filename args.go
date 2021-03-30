@@ -12,6 +12,7 @@ const (
 	rootName    = "cosmovisor"
 	genesisDir  = "genesis"
 	upgradesDir = "upgrades"
+	backupsDir  = "backups"
 	currentLink = "current"
 )
 
@@ -21,6 +22,7 @@ type Config struct {
 	Name                  string
 	AllowDownloadBinaries bool
 	RestartAfterUpgrade   bool
+	DataDir               string
 }
 
 // Root returns the root directory where all info lives
@@ -42,6 +44,12 @@ func (cfg *Config) UpgradeBin(upgradeName string) string {
 func (cfg *Config) UpgradeDir(upgradeName string) string {
 	safeName := url.PathEscape(upgradeName)
 	return filepath.Join(cfg.Root(), upgradesDir, safeName)
+}
+
+// BackupDir is the directory for backups.
+func (cfg *Config) BackupDir(upgradeName string) string {
+	safeName := url.PathEscape(upgradeName)
+	return filepath.Join(cfg.Root(), backupsDir, safeName)
 }
 
 // Symlink to genesis
@@ -87,8 +95,9 @@ func (cfg *Config) CurrentBin() (string, error) {
 // and then validate it is reasonable
 func GetConfigFromEnv() (*Config, error) {
 	cfg := &Config{
-		Home: os.Getenv("DAEMON_HOME"),
-		Name: os.Getenv("DAEMON_NAME"),
+		Home:    os.Getenv("DAEMON_HOME"),
+		Name:    os.Getenv("DAEMON_NAME"),
+		DataDir: os.Getenv("DAEMON_BACKUP_DATA_DIR"),
 	}
 
 	if os.Getenv("DAEMON_ALLOW_DOWNLOAD_BINARIES") == "true" {
@@ -120,6 +129,20 @@ func (cfg *Config) validate() error {
 
 	if !filepath.IsAbs(cfg.Home) {
 		return errors.New("DAEMON_HOME must be an absolute path")
+	}
+
+	if cfg.DataDir != "" {
+		if !filepath.IsAbs(cfg.DataDir) {
+			return errors.New("DAEMON_BACKUP_DATA_DIR must be an absolute path")
+		}
+
+		info, err := os.Stat(cfg.DataDir)
+		if err != nil {
+			return fmt.Errorf("cannot stat data dir: %w", err)
+		}
+		if !info.IsDir() {
+			return fmt.Errorf("%s is not a directory", info.Name())
+		}
 	}
 
 	// ensure the root directory exists
