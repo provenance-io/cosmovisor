@@ -3,28 +3,10 @@ package cosmovisor_test
 import (
 	"fmt"
 	"github.com/provenance-io/cosmovisor"
-	"io/fs"
 	"io/ioutil"
 	"os"
-	"path/filepath"
-	"testing"
 	"time"
 )
-
-func tree(t *testing.T, path string) string {
-	t.Helper()
-
-	s := ""
-	filepath.Walk(path, func(p string, i fs.FileInfo, e error) error {
-		d := ""
-		if i.IsDir() {
-			d = "/"
-		}
-		s += fmt.Sprintf("%s%s\n", p, d)
-		return nil
-	})
-	return s
-}
 
 func (s *upgradeTestSuite) TestBackupDataDir() {
 	home := copyTestData(s.T(), "validate")
