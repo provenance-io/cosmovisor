@@ -120,7 +120,7 @@ func WaitForUpgradeOrExit(cmd *exec.Cmd, scanOut, scanErr *bufio.Scanner) (*Upgr
 		}
 		if upgrade != nil {
 			res.SetUpgrade(upgrade)
-			_ = cmd.Process.Signal(syscall.SIGTERM)
+			_ = cmd.Process.Kill()
 		}
 		return
 	}
