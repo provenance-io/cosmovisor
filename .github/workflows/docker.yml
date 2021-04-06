@@ -63,5 +63,6 @@ jobs:
           build-args: |
             VERSION=${{ steps.prep.outputs.version }}
           platforms: linux/amd64
+          file: docker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
