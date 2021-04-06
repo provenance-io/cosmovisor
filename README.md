@@ -1,5 +1,3 @@
-# Build statuses
-
 [![Docker Build and Push](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml)
 [![Linux Binary Release](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml)
 
