@@ -1,3 +1,8 @@
+# Build statuses
+
+[![Docker Build and Push](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml)
+[![Linux Binary Release](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml)
+
 # Cosmosvisor Quick Start
 
 `cosmovisor` is a small process manager around Cosmos SDK binaries that monitors the governance module via stdout to see if there's a chain upgrade proposal coming in. If it see a proposal that gets approved it can be run manually or automatically to download the new code, stop the node, run the migration script, replace the node binary, and start with the new genesis file.
