@@ -1,3 +1,23 @@
+# Status
+
+[![Latest Release][release-badge]][release-latest]
+[![Apache 2.0 License][license-badge]][license-url]
+[![Go Report][goreport-badge]][goreport-url]
+[![LOC][loc-badge]][loc-report]
+![Lint Status][lint-badge]
+
+[license-badge]: https://img.shields.io/github/license/provenance-io/cosmovisor.svg
+[license-url]: https://github.com/provenance-io/cosmovisor/blob/main/LICENSE
+[release-badge]: https://img.shields.io/github/tag/provenance-io/cosmovisor.svg
+[release-latest]: https://github.com/provenance-io/cosmovisor/releases/latest
+[goreport-badge]: https://goreportcard.com/badge/github.com/provenance-io/cosmovisor
+[goreport-url]: https://goreportcard.com/report/github.com/provenance-io/cosmovisor
+[cover-badge]: https://codecov.io/gh/provenance-io/cosmovisor/branch/main/graph/badge.svg
+[cover-report]: https://codecov.io/gh/provenance-io/cosmovisor
+[loc-badge]: https://tokei.rs/b1/github/provenance-io/cosmovisor
+[loc-report]: https://github.com/provenance-io/cosmovisor
+[lint-badge]: https://github.com/provenance-io/cosmovisor/workflows/Lint/badge.svg
+
 [![Docker Build and Push](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml)
 [![Linux Binary Release](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml)
 
