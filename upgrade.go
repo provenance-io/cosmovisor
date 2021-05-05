@@ -11,7 +11,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/hashicorp/go-getter"
+	getter "github.com/hashicorp/go-getter"
 )
 
 // DoUpgrade will be called after the log message has been parsed and the process has terminated.
@@ -108,8 +108,8 @@ func GetDownloadURL(info *UpgradeInfo) (string, error) {
 		defer os.RemoveAll(tmpDir)
 
 		refPath := filepath.Join(tmpDir, "ref")
-		if err := getter.GetFile(refPath, doc); err != nil {
-			return "", fmt.Errorf("downloading reference link %s: %w", doc, err)
+		if ee := getter.GetFile(refPath, doc); ee != nil {
+			return "", fmt.Errorf("downloading reference link %s: %w", doc, ee)
 		}
 
 		refBytes, err := ioutil.ReadFile(refPath)

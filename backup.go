@@ -2,10 +2,11 @@ package cosmovisor
 
 import (
 	"fmt"
-	"github.com/otiai10/copy"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/otiai10/copy"
 )
 
 // BackupData backs up the data directory located at $DAEMON_BACKUP_DATA_DIR to
@@ -37,18 +38,16 @@ func BackupData(cfg *Config, upgradeInfo *UpgradeInfo) error {
 }
 
 func TouchFile(file string) (time.Time, error) {
-	_, err := os.Stat(file)
-	if os.IsNotExist(err) {
-		file, err := os.Create(file)
-		if err != nil {
-			return time.Time{}, err
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		file, ee := os.Create(file)
+		if ee != nil {
+			return time.Time{}, ee
 		}
 		defer file.Close()
 	}
 
 	currentTime := time.Now().Local()
-	err = os.Chtimes(file, currentTime, currentTime)
-	if err != nil {
+	if err := os.Chtimes(file, currentTime, currentTime); err != nil {
 		return time.Time{}, err
 	}
 	return currentTime, nil

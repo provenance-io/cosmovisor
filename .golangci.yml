@@ -1,0 +1,91 @@
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - errcheck
+    # - funlen
+    # - gocyclo
+    - goconst
+    - gocritic
+    - gofmt
+    - goimports
+    - golint
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    # - interfacer / disabled until 1.36 is available due to bugs for binarymarshaller that can't be muted with nolintlint
+    # - lll
+    # - maligned / deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.  Replaced by govet 'fieldalignment'.
+    - misspell
+    - nakedret
+    - prealloc
+    # - scopelint / deprecated (since v1.39.0) due to: The repository of the linter has been deprecated by the owner.  Replaced by exportloopref.
+    - exportloopref
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unused
+    - unparam
+    # - wsl
+    - varcheck
+    - whitespace
+    - nolintlint
+
+issues:
+  exclude-rules:
+    - text: "Use of weak random number generator"
+      linters:
+        - gosec
+    - text: "comment on exported var"
+      linters:
+        - golint
+    - text: "don't use an underscore in package name"
+      linters:
+        - golint
+    - text: "ST1003:"
+      linters:
+        - stylecheck
+  max-issues-per-linter: 10000
+  max-same-issues: 10000
+
+linters-settings:
+  govet:
+    fieldalignment: true
+    check-shadowing: true
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  golint:
+    min-confidence: 0
+  # gocyclo:
+  #   min-complexity: 15
+  dogsled:
+    max-blank-identifiers: 3
+  # lll:
+  #   line-length: 120
+  # funlen:
+  #   lines: 100
+  #   statements: 50
+  # nakedret:
+  #   max-func-lines: 50
+  maligned:
+    suggest-new: true
+  misspell:
+    locale: US
+    ignore-words:
+    - cancelled
+  nolintlint:
+    allow-unused: false
+    allow-leading-space: true
+    require-explanation: false
+    require-specific: false

@@ -2,7 +2,7 @@ package cosmovisor
 
 import "encoding/json"
 
-func isJsonLog(s string) bool {
+func isJSONLog(s string) bool {
 	return s[0] == '{' && s[len(s)-1] == '}'
 }
 
@@ -11,11 +11,10 @@ type jsonLogMessage struct {
 	Message string `json:"message"`
 }
 
-func parseJsonLog(s string) (jsonLogMessage, error) {
+func parseJSONLog(s string) (jsonLogMessage, error) {
 	m := jsonLogMessage{}
-	err := json.Unmarshal([]byte(s), &m)
-	if err != nil {
-		return jsonLogMessage{}, nil
+	if err := json.Unmarshal([]byte(s), &m); err != nil {
+		return jsonLogMessage{}, err
 	}
 
 	return m, nil

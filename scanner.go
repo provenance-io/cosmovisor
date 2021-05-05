@@ -27,16 +27,17 @@ type UpgradeInfo struct {
 }
 
 type State int
+
 const (
 	INITIAL State = iota
 	PENDING
 )
 
 const (
-	UPGRADE_TEXT = "UPGRADE "
-	NEEDED_TEXT = " NEEDED at "
-	CONSENSUS_FAIL_TEXT = "CONSENSUS FAILURE!!!"
-	PANIC_TEXT = "panic: UPGRADE"
+	UpgradeText       = "UPGRADE "
+	NeededText        = " NEEDED at "
+	ConsensusFailText = "CONSENSUS FAILURE!!!"
+	PanicText         = "panic: UPGRADE"
 )
 
 // WaitForUpdate will listen to the scanner until a line matches upgradeRegexp.
@@ -54,23 +55,23 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 		case INITIAL:
 			// Don't use the regexp unless we are actually looking at an upgrade line.
 			// Compiled regex matching is about 20x more expensive than strings.Contains(). (10 vs 200).
-			if !(strings.Contains(line, UPGRADE_TEXT) && strings.Contains(line, NEEDED_TEXT)) {
+			if !(strings.Contains(line, UpgradeText) && strings.Contains(line, NeededText)) {
 				continue
 			}
 			// Parse the info, and kick into holding for panic or consensus failure message.
 			// Hacky: If starts with { and ends with }, parse into json object.
-			if isJsonLog(line) {
+			if isJSONLog(line) {
 				if !jsonUpgradeRegex.MatchString(line) {
 					continue
 				}
 
-				jsonLine, err := parseJsonLog(line)
+				jsonLine, err := parseJSONLog(line)
 				if err != nil {
 					return nil, err
 				}
 
 				subs := jsonUpgradeRegex.FindStringSubmatch(jsonLine.Message)
-				info = &UpgradeInfo {
+				info = &UpgradeInfo{
 					Name: subs[1],
 					Info: subs[3],
 				}
@@ -87,7 +88,7 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 			}
 		case PENDING:
 			// We have hit the panic or consensus failure after an upgrade log message, return out and update.
-			if strings.Contains(line, PANIC_TEXT) || strings.Contains(line, CONSENSUS_FAIL_TEXT) {
+			if strings.Contains(line, PanicText) || strings.Contains(line, ConsensusFailText) {
 				return info, nil
 			}
 			continue

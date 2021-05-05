@@ -21,34 +21,34 @@ func LaunchProcess(cfg *Config, args []string, stdout, stderr io.Writer) (bool, 
 		return false, fmt.Errorf("error creating symlink to genesis: %w", err)
 	}
 
-	if err := EnsureBinary(bin); err != nil {
-		return false, fmt.Errorf("current binary invalid: %w", err)
+	if e := EnsureBinary(bin); e != nil {
+		return false, fmt.Errorf("current binary invalid: %w", e)
 	}
 
 	cmd := exec.Command(bin, args...)
-	outpipe, err := cmd.StdoutPipe()
-	if err != nil {
-		return false, err
+	outpipe, e := cmd.StdoutPipe()
+	if e != nil {
+		return false, e
 	}
 
-	errpipe, err := cmd.StderrPipe()
-	if err != nil {
-		return false, err
+	errpipe, e := cmd.StderrPipe()
+	if e != nil {
+		return false, e
 	}
 
 	scanOut := bufio.NewScanner(io.TeeReader(outpipe, stdout))
 	scanErr := bufio.NewScanner(io.TeeReader(errpipe, stderr))
 
-	if err := cmd.Start(); err != nil {
-		return false, fmt.Errorf("launching process %s %s: %w", bin, strings.Join(args, " "), err)
+	if e := cmd.Start(); e != nil {
+		return false, fmt.Errorf("launching process %s %s: %w", bin, strings.Join(args, " "), e)
 	}
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGQUIT, syscall.SIGTERM)
 	go func() {
 		sig := <-sigs
-		if err := cmd.Process.Signal(sig); err != nil {
-			log.Fatal(err)
+		if ee := cmd.Process.Signal(sig); ee != nil {
+			log.Fatal(ee)
 		}
 	}()
 
@@ -122,7 +122,6 @@ func WaitForUpgradeOrExit(cmd *exec.Cmd, scanOut, scanErr *bufio.Scanner) (*Upgr
 			res.SetUpgrade(upgrade)
 			_ = cmd.Process.Kill()
 		}
-		return
 	}
 	// wait for the scanners, which can trigger upgrade and kill cmd
 	go waitScan(scanOut)

@@ -36,8 +36,8 @@ func (s *upgradeTestSuite) TestCurrentBin() {
 	for _, name := range []string{"missing", "nobin", "noexec"} {
 		s.Require().Error(cfg.SetCurrentUpgrade(name), name)
 
-		currentBin, err := cfg.CurrentBin()
-		s.Require().NoError(err)
+		currentBin, ee := cfg.CurrentBin()
+		s.Require().NoError(ee)
 
 		s.Require().Equal(cfg.GenesisBin(), currentBin, name)
 	}
@@ -100,8 +100,8 @@ func (s *upgradeTestSuite) TestDoUpgradeNoDownloadUrl() {
 		info := &cosmovisor.UpgradeInfo{Name: name}
 		err = cosmovisor.DoUpgrade(cfg, info)
 		s.Require().Error(err, name)
-		currentBin, err := cfg.CurrentBin()
-		s.Require().NoError(err)
+		currentBin, ee := cfg.CurrentBin()
+		s.Require().NoError(ee)
 		s.Require().Equal(cfg.GenesisBin(), currentBin, name)
 	}
 

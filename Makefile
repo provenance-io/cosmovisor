@@ -56,3 +56,48 @@ build-release-zip: build-release-bin
 
 .PHONY: build-release
 build-release: build-release-zip build-release-checksum
+
+###########
+# Linting #
+###########
+LINTER := $(shell command -v golangci-lint 2> /dev/null)
+MISSPELL := $(shell command -v misspell 2> /dev/null)
+GOIMPORTS := $(shell command -v goimports 2> /dev/null)
+
+.PHONY: gofmt
+gofmt:
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs gofmt -s -w
+
+.PHONY: check-goimports
+check-goimports:
+ifndef GOIMPORTS
+	echo "Fetching goimports"
+	go get golang.org/x/tools/cmd/goimports
+endif
+
+.PHONY: goimports
+goimports: check-goimports
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs goimports -w -local github.com/provenance-io/cosmovisor
+
+.PHONY: check-gomisspell
+check-gomisspell:
+ifndef MISSPELL
+	echo "Fetching misspell"
+	go get -u github.com/client9/misspell/cmd/misspell
+endif
+
+.PHONY: gomisspell
+gomisspell: check-gomisspell
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" | xargs misspell -w
+
+.PHONY: check-lint
+check-lint:
+ifndef LINTER
+	echo "Fetching golangci-lint"
+	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.39.0
+endif
+
+.PHONY: lint
+lint: check-lint goimports gofmt gomisspell
+	golangci-lint run
+
