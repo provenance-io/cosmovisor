@@ -78,10 +78,10 @@ func (s *processTestSuite) TestLaunchProcessWithDownloads() {
 	s.Require().Equal("", stderr.String())
 	s.Require().Equal(
 		"Preparing auto-download some args\n"+
-			`ERROR: UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"any":"https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_binary/autod.zip?checksum=sha256:625f3888456c57b1b1f7706243864497bc7ee18d7e8f30de792bbc6150815d54"}} module=main`+"\n" +
+			`ERROR: UPGRADE "chain2" NEEDED at height: 49: {"binaries":{"any":"https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_binary/autod.zip?checksum=sha256:625f3888456c57b1b1f7706243864497bc7ee18d7e8f30de792bbc6150815d54"}} module=main`+"\n"+
 			`ERROR: CONSENSUS FAILURE!!! err="UPGRADE \"chain2\" NEEDED at height: 49: {\"binaries\":{\"any\":\"https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/zip_binary/autod.zip?checksum=sha256:625f3888456c57b1b1f7706243864497bc7ee18d7e8f30de792bbc6150815d54\"}}" module=main`+"\n",
-			stdout.String(),
-		)
+		stdout.String(),
+	)
 
 	// ensure this is upgraded now and produces new output
 	currentBin, err = cfg.CurrentBin()
@@ -99,8 +99,8 @@ func (s *processTestSuite) TestLaunchProcessWithDownloads() {
 			"Args: run --fast\n"+
 			`ERROR: UPGRADE "chain3" NEEDED at height: 936: https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/ref_zipped?checksum=sha256:3d370b9b483c779b6cbaa7dbd266da6cacf9eb8f29b0bfb66e16d4fa8ba02b3a module=main`+"\n"+
 			`ERROR: CONSENSUS FAILURE!!! err="UPGRADE \"chain3\" NEEDED at height: 936: https://raw.githubusercontent.com/provenance-io/cosmovisor/main/testdata/repo/ref_zipped?checksum=sha256:3d370b9b483c779b6cbaa7dbd266da6cacf9eb8f29b0bfb66e16d4fa8ba02b3a" module=main`+"\n",
-			stdout.String(),
-		)
+		stdout.String(),
+	)
 
 	// ended with one more upgrade
 	currentBin, err = cfg.CurrentBin()

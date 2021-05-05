@@ -2,10 +2,11 @@ package cosmovisor_test
 
 import (
 	"fmt"
-	"github.com/provenance-io/cosmovisor"
 	"io/ioutil"
 	"os"
 	"time"
+
+	"github.com/provenance-io/cosmovisor"
 )
 
 func (s *upgradeTestSuite) TestBackupDataDir() {
