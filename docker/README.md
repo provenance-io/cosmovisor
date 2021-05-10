@@ -5,10 +5,11 @@
 
 # Current release tags and `Dockerfile` links:
 
-- [`v0.3.0`](https://github.com/provenance-io/cosmovisor/blob/v0.3.0/Dockerfile)
+- [`v0.4.0`](https://github.com/provenance-io/cosmovisor/blob/v0.4.0/Dockerfile)
 
 # Historical release tags and `Dockerfile` links:
 
+- [`v0.3.0`](https://github.com/provenance-io/cosmovisor/blob/v0.3.0/Dockerfile)
 - [`v0.2.0`](https://github.com/provenance-io/cosmovisor/blob/v0.2.0/Dockerfile)
 - [`v0.1.0`](https://github.com/provenance-io/cosmovisor/blob/v0.3.0/Dockerfile)
 
