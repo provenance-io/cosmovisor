@@ -138,6 +138,7 @@ func GetDownloadURL(info *UpgradeInfo) (string, error) {
 	return "", errors.New("upgrade info doesn't contain binary map")
 }
 
+// OSArch detect the current GOOS/GOARCH combination.
 func OSArch() string {
 	return fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH)
 }

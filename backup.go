@@ -37,6 +37,7 @@ func BackupData(cfg *Config, upgradeInfo *UpgradeInfo) error {
 	return nil
 }
 
+// TouchFile creates a file at the location similar to the POSIX `touch` command.
 func TouchFile(file string) (time.Time, error) {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		file, ee := os.Create(file)

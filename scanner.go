@@ -26,18 +26,18 @@ type UpgradeInfo struct {
 	Info string
 }
 
-type State int
+type scannerState int
 
 const (
-	INITIAL State = iota
-	PENDING
+	scannerStateInitial scannerState = iota
+	scannerStatePending
 )
 
 const (
-	UpgradeText       = "UPGRADE "
-	NeededText        = " NEEDED at "
-	ConsensusFailText = "CONSENSUS FAILURE!!!"
-	PanicText         = "panic: UPGRADE"
+	upgradeText       = "UPGRADE "
+	neededText        = " NEEDED at "
+	consensusFailText = "CONSENSUS FAILURE!!!"
+	panicText         = "panic: UPGRADE"
 )
 
 // WaitForUpdate will listen to the scanner until a line matches upgradeRegexp.
@@ -45,17 +45,17 @@ const (
 // It returns (nil, err) if the input stream errored
 // It returns (nil, nil) if the input closed without ever matching the regexp
 func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
-	state := INITIAL
+	state := scannerStateInitial
 
 	var info *UpgradeInfo
 	for scanner.Scan() {
 		line := scanner.Text()
 
 		switch state {
-		case INITIAL:
+		case scannerStateInitial:
 			// Don't use the regexp unless we are actually looking at an upgrade line.
 			// Compiled regex matching is about 20x more expensive than strings.Contains(). (10 vs 200).
-			if !(strings.Contains(line, UpgradeText) && strings.Contains(line, NeededText)) {
+			if !(strings.Contains(line, upgradeText) && strings.Contains(line, neededText)) {
 				continue
 			}
 			// Parse the info, and kick into holding for panic or consensus failure message.
@@ -75,7 +75,7 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 					Name: subs[1],
 					Info: subs[3],
 				}
-				state = PENDING
+				state = scannerStatePending
 				continue
 			} else {
 				subs := plainUpgradeRegex.FindStringSubmatch(line)
@@ -83,12 +83,12 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 					Name: subs[1],
 					Info: subs[3],
 				}
-				state = PENDING
+				state = scannerStatePending
 				continue
 			}
-		case PENDING:
+		case scannerStatePending:
 			// We have hit the panic or consensus failure after an upgrade log message, return out and update.
-			if strings.Contains(line, PanicText) || strings.Contains(line, ConsensusFailText) {
+			if strings.Contains(line, panicText) || strings.Contains(line, consensusFailText) {
 				return info, nil
 			}
 			continue
