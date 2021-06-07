@@ -18,7 +18,7 @@ func isJSONLog(s string) (string, bool) {
 		return "", false
 	}
 
-	return s[beg:end+1], true
+	return s[beg : end+1], true
 }
 
 type jsonLogMessage struct {
