@@ -1,9 +1,19 @@
 package cosmovisor
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strings"
+)
 
-func isJSONLog(s string) bool {
-	return s[0] == '{' && s[len(s)-1] == '}'
+// isJSONLog returns whether the string contains json, and if so, returns that json.
+func isJSONLog(s string) (string, bool) {
+	beg := strings.Index(s, "{")
+	end := strings.LastIndex(s, "}")
+	if beg == end || beg > end {
+		return "", false
+	}
+
+	return s[beg:end+1], true
 }
 
 type jsonLogMessage struct {
