@@ -13,6 +13,11 @@ func isJSONLog(s string) (string, bool) {
 		return "", false
 	}
 
+	// Doesn't contain `...."message":"UPGRADE...NEEDED"....`
+	if !strings.Contains(s, "\"message\":\"UPGRADE") {
+		return "", false
+	}
+
 	return s[beg:end+1], true
 }
 
