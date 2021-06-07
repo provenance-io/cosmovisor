@@ -60,12 +60,12 @@ func WaitForUpdate(scanner *bufio.Scanner) (*UpgradeInfo, error) {
 			}
 			// Parse the info, and kick into holding for panic or consensus failure message.
 			// Hacky: If starts with { and ends with }, parse into json object.
-			if isJSONLog(line) {
-				if !jsonUpgradeRegex.MatchString(line) {
+			if jsonLog, ok := isJSONLog(line); ok {
+				if !jsonUpgradeRegex.MatchString(jsonLog) {
 					continue
 				}
 
-				jsonLine, err := parseJSONLog(line)
+				jsonLine, err := parseJSONLog(jsonLog)
 				if err != nil {
 					return nil, err
 				}
