@@ -16,7 +16,7 @@ func BackupData(cfg *Config, upgradeInfo *UpgradeInfo) error {
 	// Stamp file for completion tracking.
 	backupStamp := fmt.Sprintf("%s/.keep", backupDir)
 	// If stamp exists, this plan has executed the backup already.
-	if _, err := os.Stat(backupStamp); os.IsExist(err) {
+	if _, err := os.Stat(backupStamp); err == nil {
 		return nil
 	}
 	// Make backup dir if it doesn't exist.
