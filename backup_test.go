@@ -62,14 +62,14 @@ func (s *upgradeTestSuite) TestNoDoubleBackupDataDir() {
 	keep := fmt.Sprintf("%s/%s", backupDir, ".keep")
 	s.Require().FileExists(keep)
 	// Remove backup but leave keep file.
-	err = os.RemoveAll(backupDir+"/data")
+	err = os.RemoveAll(backupDir + "/data")
 	s.Require().NoError(err)
 	s.Require().FileExists(keep)
 	// Verify data not copied again.
 	err = cosmovisor.DoUpgrade(cfg, info)
 	s.Require().NoError(err)
 	// Backup dir should not exist.
-	s.Require().NoDirExists(backupDir+"/data")
+	s.Require().NoDirExists(backupDir + "/data")
 }
 
 func (s *upgradeTestSuite) TestNoBackupDataDir() {
