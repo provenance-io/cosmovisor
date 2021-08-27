@@ -4,6 +4,29 @@ CWD=$(shell pwd)
 BUILDDIR=$(CWD)/build
 TARGET=cosmovisor
 
+COMMIT := $(shell git log -1 --format='%h')
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+BRANCH_PRETTY := $(subst /,-,$(BRANCH))
+BUILT  := $(shell date -u +%F-%T-%Z)
+MODULE := $(shell go list ./)
+
+# don't override user values
+TAG_VERSION = $(shell git describe --exact-match 2>/dev/null)
+BRANCH_VERSION = $(BRANCH_PRETTY)-$(COMMIT)
+
+ifneq ($(TAG_VERSION),)
+  VERSION = $(TAG_VERSION)
+else
+  VERSION = $(BRANCH_VERSION)
+endif
+
+ldflags = -w -s \
+    -X github.com/provenance-io/cosmovisor/version.Name=$(TARGET) \
+    -X github.com/provenance-io/cosmovisor/version.Module=$(MODULE) \
+    -X github.com/provenance-io/cosmovisor/version.Version=$(VERSION) \
+    -X github.com/provenance-io/cosmovisor/version.Commit=$(COMMIT) \
+    -X github.com/provenance-io/cosmovisor/version.Built=$(BUILT)
+
 all: build test
 
 .PHONY: sums
@@ -12,7 +35,7 @@ sums:
 
 .PHONY: build
 build:
-	go build -mod=readonly -o $(BUILDDIR)/$(TARGET) ./cmd/$(TARGET)
+	go build -ldflags '$(ldflags)' -mod=readonly -o $(BUILDDIR)/$(TARGET) ./cmd/$(TARGET)
 
 .PHONY: test
 test:
