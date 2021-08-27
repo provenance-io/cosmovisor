@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/provenance-io/cosmovisor/version"
 	"os"
+
+	"github.com/provenance-io/cosmovisor/version"
 
 	"github.com/provenance-io/cosmovisor"
 )
 
 func main() {
-    if os.Getenv("DAEMON_INFO") != "" {
-    	fmt.Fprintf(os.Stderr, "%s\n", version.BuildInfo())
+	if os.Getenv("DAEMON_INFO") != "" {
+		fmt.Fprintf(os.Stderr, "%s\n", version.BuildInfo())
 		return
 	}
 
