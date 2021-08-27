@@ -6,6 +6,7 @@ RUN go mod download
 COPY *.go ./
 COPY cmd/ ./cmd/
 COPY testdata/ ./testdata/
+COPY version/ ./version/
 RUN go test ./...
 RUN go install ./cmd/cosmovisor
 

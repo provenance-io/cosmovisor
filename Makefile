@@ -43,7 +43,7 @@ test:
 
 .PHONY: docker-build
 docker-build:
-	docker build -t provenanceio/$(TARGET) .
+	docker build -f docker/Dockerfile -t provenanceio/$(TARGET) .
 
 .PHONY: docker-push
 docker-push:
