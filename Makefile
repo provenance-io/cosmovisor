@@ -8,7 +8,7 @@ COMMIT := $(shell git log -1 --format='%h')
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 BRANCH_PRETTY := $(subst /,-,$(BRANCH))
 BUILT  := $(shell date -u +%F-%T-%Z)
-MODULE := $(shell go list ./)
+MODULE := $(shell go list ./ 2>&1)
 
 # don't override user values
 TAG_VERSION = $(shell git describe --exact-match 2>/dev/null)
@@ -27,11 +27,16 @@ ldflags = -w -s \
     -X github.com/provenance-io/cosmovisor/version.Commit=$(COMMIT) \
     -X github.com/provenance-io/cosmovisor/version.Built=$(BUILT)
 
-all: build test
+all: vendor build test
 
 .PHONY: sums
 sums:
 	scripts/update-sums.sh
+
+.PHONY: vendor
+vendor:
+	go mod tidy
+	go mod vendor
 
 .PHONY: build
 build:
@@ -40,6 +45,10 @@ build:
 .PHONY: test
 test:
 	go test -mod=readonly -race ./...
+
+.PHONY: clean
+clean:
+	rm -rf $(BUILDDIR)
 
 .PHONY: docker-build
 docker-build:
