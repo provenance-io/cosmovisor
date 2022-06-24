@@ -148,11 +148,11 @@ func (s *upgradeTestSuite) TestGetDownloadURL() {
 			isErr: true,
 		},
 		"proper binary": {
-			info: `{"binaries": {"darwin/amd64": "https://foo.bar/", "linux/amd64": "https://foo.bar/", "windows/amd64": "https://something.else"}}`,
+			info: `{"binaries": {"darwin/arm64": "https://foo.bar/", "darwin/amd64": "https://foo.bar/", "linux/amd64": "https://foo.bar/", "windows/amd64": "https://something.else"}}`,
 			url:  "https://foo.bar/",
 		},
 		"any architecture not used": {
-			info: `{"binaries": {"darwin/amd64": "https://foo.bar/", "linux/amd64": "https://foo.bar/", "*": "https://something.else"}}`,
+			info: `{"binaries": {"darwin/arm64": "https://foo.bar/", "darwin/amd64": "https://foo.bar/", "linux/amd64": "https://foo.bar/", "*": "https://something.else"}}`,
 			url:  "https://foo.bar/",
 		},
 		"any architecture used": {
