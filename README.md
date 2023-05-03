@@ -1,198 +1,65 @@
 # Status
 
-[![Latest Release][release-badge]][release-latest]
 [![Apache 2.0 License][license-badge]][license-url]
-[![Go Report][goreport-badge]][goreport-url]
-[![LOC][loc-badge]][loc-report]
-![Lint Status][lint-badge]
 
 [license-badge]: https://img.shields.io/github/license/provenance-io/cosmovisor.svg
 [license-url]: https://github.com/provenance-io/cosmovisor/blob/main/LICENSE
-[release-badge]: https://img.shields.io/github/tag/provenance-io/cosmovisor.svg
-[release-latest]: https://github.com/provenance-io/cosmovisor/releases/latest
-[goreport-badge]: https://goreportcard.com/badge/github.com/provenance-io/cosmovisor
-[goreport-url]: https://goreportcard.com/report/github.com/provenance-io/cosmovisor
-[cover-badge]: https://codecov.io/gh/provenance-io/cosmovisor/branch/main/graph/badge.svg
-[cover-report]: https://codecov.io/gh/provenance-io/cosmovisor
-[loc-badge]: https://tokei.rs/b1/github/provenance-io/cosmovisor
-[loc-report]: https://github.com/provenance-io/cosmovisor
-[lint-badge]: https://github.com/provenance-io/cosmovisor/workflows/Lint/badge.svg
 
-[![Docker Build and Push](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/docker.yml)
-[![Linux Binary Release](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml/badge.svg)](https://github.com/provenance-io/cosmovisor/actions/workflows/release.yml)
+# Provenance Blockchain fork of Cosmos-SDK's Cosmosvisor
 
-# Cosmosvisor Quick Start
+This repo has been archived and should no longer be used.
 
-`cosmovisor` is a small process manager around Cosmos SDK binaries that monitors the governance module via stdout to see if there's a chain upgrade proposal coming in. If it see a proposal that gets approved it can be run manually or automatically to download the new code, stop the node, run the migration script, replace the node binary, and start with the new genesis file.
+If you are currently using a version of Cosmovisor built by this repo, you should switch to the one built and maintained by Cosmos-SDK: https://github.com/cosmos/cosmos-sdk/tree/main/tools/cosmovisor
 
-## Installation
+<!-- TOC -->
+  - [Migrating to the SDK's version](#migrating-to-the-sdk-s-version)
+  - [Differences](#differences)
+    - [Invocation](#invocation)
+    - [New Options](#new-options)
+    - [Version](#version)
 
-Run:
+## Migrating to the SDK's version
 
-`go get github.com/provenance-io/cosmovisor/cmd/cosmovisor`
+The file structure and most environment variables are the same.
+However, the command to invoke `provenanced` using `cosmovisor` has changed slightly.
 
-## Command Line Arguments And Environment Variables
+To switch to the SDK's version:
 
-All arguments passed to the `cosmovisor` program will be passed to the current daemon binary (as a subprocess).
-It will return `/dev/stdout` and `/dev/stderr` of the subprocess as its own. Because of that, it cannot accept
-any command line arguments, nor print anything to output (unless it terminates unexpectedly before executing a
-binary).
+1. Stop your node.
+2. Uninstall your current `cosmovisor` executable.
+3. Install `cosmovisor` fom the SDK ([Instructions](https://github.com/cosmos/cosmos-sdk/tree/main/tools/cosmovisor#installation)).
+4. If you use the `DAEMON_BACKUP_DATA_DIR` environment variable, change its name to `DAEMON_DATA_BACKUP_DIR`.
+5. Update your execution commands to start with `cosmovisor run` instead of just `cosmovisor`. For example, if you currently execute `cosmovisor start`, it must be changed to `cosmovisor run start`.
+6. Restart your node.
 
-`cosmovisor` reads its configuration from environment variables:
+## Differences
 
-* `DAEMON_HOME` is the location where upgrade binaries should be kept (e.g. `$HOME/.gaiad` or `$HOME/.xrnd`).
-* `DAEMON_NAME` is the name of the binary itself (eg. `xrnd`, `gaiad`, `simd`, etc).
-* `DAEMON_ALLOW_DOWNLOAD_BINARIES` (*optional*) if set to `true` will enable auto-downloading of new binaries
-(for security reasons, this is intended for full nodes rather than validators).
-* `DAEMON_RESTART_AFTER_UPGRADE` (*optional*) if set to `true` it will restart the sub-process with the same
-command line arguments and flags (but new binary) after a successful upgrade. By default, `cosmovisor` dies
-afterwards and allows the supervisor to restart it if needed. Note that this will not auto-restart the child
-if there was an error.
-* `DAEMON_BACKUP_DATA_DIR` (*optional*) if set to the daemons data dir, will enable pre-upgrade backups of
-`$DAEMON_BACKUP_DATA_DIR/*` directory to `$DAEMON_HOME/backups/$plan/data`.
+### Invocation
 
-## Data Folder Layout
+The SDK's version now has a `run` sub-command that must be used when invoking the configured executable (e.g. `provenanced`).
+All arguments provided to `cosmovisor run <args>` are provided to the configured executable the same way that this version behaves with just `cosmovisor <args>`.
 
-`$DAEMON_HOME/cosmovisor` is expected to belong completely to `cosmovisor` and 
-subprocesses that are controlled by it. The folder content is organised as follows:
+For example, the following commands are equivalent:
+* Without `cosmovisor`: `provenanced start`
+* This version: `cosmovisor start`
+* SDK's version: `cosmovisor run start`
 
-```
-.
-├── current -> genesis or upgrades/<name>
-├── genesis
-│   └── bin
-│       └── $DAEMON_NAME
-├── upgrades
-│   └── <name>
-│       └── bin
-│           └── $DAEMON_NAME
-└── backups
-    └── <name>
-        └── data
-```
+### New Options
 
-Each version of the Cosmos SDK application is stored under either `genesis` or `upgrades/<name>`, which holds `bin/$DAEMON_NAME`
-along with any other needed files such as auxiliary client programs or libraries. `current` is a symbolic link to the currently
-active folder (so `current/bin/$DAEMON_NAME` is the currently active binary).
+The SDK's version has some options that were not available in this version.
+See [Command Line Arguments And Environment Variables](https://github.com/cosmos/cosmos-sdk/tree/main/tools/cosmovisor#command-line-arguments-and-environment-variables) for details.
 
-*Note: the `name` variable in `upgrades/<name>` holds the URI-encoded name of the upgrade as specified in the upgrade module plan.*
+The following environment variables were not available in this version but are options in the SDK's version:
 
-Please note that `$DAEMON_HOME/cosmovisor` just stores the *binaries* and associated *program code*.
-The `cosmovisor` binary can be stored in any typical location (eg `/usr/local/bin`). The actual blockchain
-program will store it's data under their default data directory (e.g. `$HOME/.gaiad`) which is independent of
-the `$DAEMON_HOME`. You can choose to set `$DAEMON_HOME` to the actual binary's home directory and then end up
-with a configuation like the following, but this is left as a choice to the system administrator for best
-directory layout:
+* DAEMON_RESTART_DELAY
+* UNSAFE_SKIP_BACKUP
+* DAEMON_POLL_INTERVAL
+* DAEMON_PREUPGRADE_MAX_RETRIES
+* COSMOVISOR_DISABLE_LOGS
 
-```
-.gaiad
-├── config
-├── data
-└── cosmovisor
-```
+You can view your configuration by running the `cosmovisor config` command in the environment where you usually run `cosmovisor`.
 
-## Usage
+### Version
 
-The system administrator admin is responsible for:
-* installing the `cosmovisor` binary and configure the host's init system (e.g. `systemd`, `launchd`, etc) along with the environmental variables appropriately;
-* installing the `genesis` folder manually;
-* installing the `upgrades/<name>` folders manually.
-
-`cosmovisor` will set the `current` link to point to `genesis` at first start (when no `current` link exists) and handles
-binaries switch overs at the correct points in time, so that the system administrator can prepare days in advance and relax at upgrade time.
-
-Note that blockchain applications that wish to support upgrades may package up a genesis `cosmovisor` tarball with this information,
-just as they prepare the genesis binary tarball. In fact, they may offer a tarball will all upgrades up to current point for easy download
-for those who wish to sync a fullnode from start.
-
-The `DAEMON` specific code and operations (e.g. tendermint config, the application db, syncing blocks, etc) are performed as normal.
-Application binaries' directives such as command-line flags and environment variables work normally.
-
-## Example: simd
-
-The following instructions provide a demonstration of `cosmovisor`'s integration with the `simd` application
-shipped along the Cosmos SDK's source code.
-
-First compile `simd`:
-
-```
-cd cosmos-sdk/
-make build
-```
-
-Create a new key and setup the `simd` node:
-
-```
-rm -rf $HOME/.simapp
-./build/simd keys --keyring-backend=test add validator
-./build/simd init testing --chain-id test
-./build/simd add-genesis-account --keyring-backend=test $(./build/simd keys --keyring-backend=test show validator -a) 1000000000stake,1000000000validatortoken
-./build/simd gentx --keyring-backend test --chain-id test validator 100000stake
-./build/simd collect-gentxs
-```
-
-Set the required environment variables:
-
-```
-export DAEMON_NAME=simd         # binary name
-export DAEMON_HOME=$HOME/.simapp  # daemon's home directory
-```
-
-Create the `cosmovisor`’s genesis folders and deploy the binary:
-
-```
-mkdir -p $DAEMON_HOME/cosmovisor/genesis/bin
-cp ./build/simd $DAEMON_HOME/cosmovisor/genesis/bin
-```
-
-For the sake of this demonstration, we would amend `voting_params.voting_period` in `.simapp/config/genesis.json` to a reduced time ~5 minutes (300s) and eventually launch `cosmosvisor`:
-
-```
-cosmovisor start
-```
-
-Submit a software upgrade proposal:
-
-```
-./build/simd tx gov submit-proposal software-upgrade test1 --title "upgrade-demo" --description "upgrade"  --from validator --upgrade-height 100 --deposit 10000000stake --chain-id test --keyring-backend test -y
-```
- 
-Query the proposal to ensure it was correctly broadcast and added to a block:
-
-```
-./build/simd query gov proposal 1
-```
- 
-Submit a `Yes` vote for the upgrade proposal:
-
-```
-./build/simd tx gov vote 1 yes --from validator --keyring-backend test --chain-id test -y
-```
-
-For the sake of this demonstration, we will hardcode a modification in `simapp` to simulate a code change.
-In `simapp/app.go`, find the line containing the upgrade Keeper initialisation, it should look like
-`app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath)`.
-After that line, add the following snippet:
-
- ```
- app.UpgradeKeeper.SetUpgradeHandler("test1", func(ctx sdk.Context, plan upgradetypes.Plan) {
-		// Add some coins to a random account
-		addr, err := sdk.AccAddressFromBech32("cosmos18cgkqduwuh253twzmhedesw3l7v3fm37sppt58")
-		if err != nil {
-			panic(err)
-		}
-		err = app.BankKeeper.AddCoins(ctx, addr, sdk.Coins{sdk.Coin{Denom: "stake", Amount: sdk.NewInt(345600000)}})
-		if err != nil {
-			panic(err)
-		}
-	})
-```
-
-Now recompile a new binary and place it in `$DAEMON_HOME/cosmosvisor/upgrades/test1/bin`:
-
-```
-make build
-cp ./build/simd $DAEMON_HOME/cosmovisor/upgrades/test1/bin
-```
-
-The upgrade will occur automatically at height 100.
+Using this version, running the command `DAEMON_INFO=1 cosmovisor` would ouput version information.
+The SDK's version does not do this, but has a `cosmovisor version` command instead.
