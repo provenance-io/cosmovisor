@@ -1,11 +1,4 @@
-# Status
-
-[![Apache 2.0 License][license-badge]][license-url]
-
-[license-badge]: https://img.shields.io/github/license/provenance-io/cosmovisor.svg
-[license-url]: https://github.com/provenance-io/cosmovisor/blob/main/LICENSE
-
-# Provenance Blockchain fork of Cosmos-SDK's Cosmosvisor
+# Cosmosvisor (fork by Provenance Blockchain)
 
 This repo has been archived and should no longer be used.
 
@@ -51,11 +44,11 @@ See [Command Line Arguments And Environment Variables](https://github.com/cosmos
 
 The following environment variables were not available in this version but are options in the SDK's version:
 
-* DAEMON_RESTART_DELAY
-* UNSAFE_SKIP_BACKUP
-* DAEMON_POLL_INTERVAL
-* DAEMON_PREUPGRADE_MAX_RETRIES
-* COSMOVISOR_DISABLE_LOGS
+* `DAEMON_RESTART_DELAY`
+* `UNSAFE_SKIP_BACKUP`
+* `DAEMON_POLL_INTERVAL`
+* `DAEMON_PREUPGRADE_MAX_RETRIES`
+* `COSMOVISOR_DISABLE_LOGS`
 
 You can view your configuration by running the `cosmovisor config` command in the environment where you usually run `cosmovisor`.
 
